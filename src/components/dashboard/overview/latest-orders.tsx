@@ -29,7 +29,7 @@ export interface Order {
   _id: string;
   companyName: string;
   phone: number;
-  Price: number;
+  price: number;
   status: 'pending' | 'accepted' | 'rejected';
   createdAt: Date;
 }
@@ -95,6 +95,7 @@ export function LatestOrders({ orders = [], sx }: LatestOrdersProps): React.JSX.
               <TableCell>Offre</TableCell>
               <TableCell>Société</TableCell>
               <TableCell sortDirection="desc">Numéro</TableCell>
+              <TableCell>Prix</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -108,6 +109,7 @@ export function LatestOrders({ orders = [], sx }: LatestOrdersProps): React.JSX.
                   <TableCell>{order.id}</TableCell>
                   <TableCell>{order.companyName}</TableCell>
                   <TableCell>{order.phone}</TableCell>
+                  <TableCell>{order.price}</TableCell>
                   <TableCell>
                     <Chip color={color} label={label} size="small" />
                   </TableCell>

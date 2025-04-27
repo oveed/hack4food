@@ -19,7 +19,7 @@ export interface Product {
   id: string;
   sessionId: string;
   name: string;
-  updatedAt: Date;
+  date: Date;
 }
 
 export interface LatestProductsProps {
@@ -41,14 +41,14 @@ export function LatestProducts({ products = [], sx, onProductClick }: LatestProd
         key={product.id}
         button
         onClick={() =>{
-          onProductClick?.(product.sessionId), console.log(product.sessionId), console.log(product)
+          onProductClick?.(product.sessionId),console.log( 'akakakakkakakakakkakakakkaka',product)
         }}
       >
       
             <ListItemText
               primary={product.name}
               primaryTypographyProps={{ variant: 'subtitle1' }}
-              secondary={` ${dayjs(product.updatedAt).format('MMM D, YYYY')}`}
+              secondary={dayjs(product.date).format('YYYY-MM-DD')}  // or any other date format
               secondaryTypographyProps={{ variant: 'body2' }}
             />
             <IconButton edge="end">

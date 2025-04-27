@@ -13,7 +13,7 @@ const user = {
   avatar: '/assets/avatar.png',
   firstName: 'Sofia',
   lastName: 'Rivers',
-  email: 'sofia@devias.io',
+  email: 'ahmed.ben.salemy@gmail.com',
 } satisfies User;
 
 export interface SignUpParams {

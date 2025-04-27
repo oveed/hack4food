@@ -39,8 +39,10 @@ async function getLatestSessionStats() {
   const checkInRes = await fetch('http://192.168.1.224:5000/api/checkins/');
   const checkIns = await checkInRes.json();
 
-  const matchingCheckIn = checkIns.find((checkIn: any) => checkIn.session._id.toString() === sessionId);
-
+  const matchingCheckIn = checkIns.find(
+    (checkIn: any) => checkIn?.session?._id?.toString() === sessionId
+  );
+  
   if (!matchingCheckIn) {
     // No check-in yet for the session (new session without any check-ins)
     return {
@@ -182,24 +184,36 @@ const fetchOffersAndBusinesses = async () => {
     // Step 2: Fetch the business name for each offer and add an incremental id
     const offersWithBusinessDetails = await Promise.all(
       offersData
-        .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) // Sort offers by the most recent
+        .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .map(async (offer: any, index: number) => {
-          const businessId = offer.business; // Assuming each offer has a `businessId` field
-
-          const businessResponse = await fetch(`http://192.168.1.224:5000/api/businesses/${businessId}`);
-          if (!businessResponse.ok) {
-            throw new Error('Failed to fetch business details');
+          try {
+            const businessId = offer.business;
+            const businessResponse = await fetch(`http://192.168.1.224:5000/api/businesses/${businessId}`);
+            if (!businessResponse.ok) {
+              console.warn(`Business ${businessId} not found`);
+              return {
+                id: index + 1,
+                ...offer,
+                companyName: null,
+              };
+            }
+            const businessData = await businessResponse.json();
+            return {
+              id: index + 1,
+              ...offer,
+              companyName: businessData.companyName,
+            };
+          } catch (error) {
+            console.error('Error fetching business:', error);
+            return {
+              id: index + 1,
+              ...offer,
+              companyName: null,
+            };
           }
-          const businessData = await businessResponse.json();
-          console.log('businessData', businessData.companyName);
-          // Add a sequential id, starting from 1 for the most recent offer
-          return {
-            id: index + 1, // Adds an id starting from 1
-            ...offer,
-            companyName: businessData.companyName,
-          };
         })
     );
+    
 
     // Return the offers with their respective business names and assigned ids
     return offersWithBusinessDetails;
@@ -254,13 +268,13 @@ export default function Page(): React.JSX.Element {
           });
 
           const formattedSessions = sortedSessions.map(
-            (session: { day: string; sessionId: string; type: string; createdAt: string }, index: number) => ({
+            (session: { day: string; sessionId: string; type: string; date: string }, index: number) => ({
               id: `MEAL-${String(index + 1).padStart(3, '0')}`,
               name: `${session.day} | ${
                 session.type === 'lunch' ? 'déjeuner' : session.type === 'dinner' ? 'diner' : session.type
               }`,
               sessionId: session.sessionId,
-              updatedAt: new Date(session.createdAt),
+              date: new Date(session.date),
             })
           );
           setSessions(formattedSessions);

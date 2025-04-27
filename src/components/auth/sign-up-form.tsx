@@ -168,7 +168,7 @@ export function SignUpForm(): React.JSX.Element {
           </Button>
         </Stack>
       </form>
-      <Alert color="warning">Created users are not persisted</Alert>
+     
     </Stack>
   );
 }
